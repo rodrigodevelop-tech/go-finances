@@ -6,13 +6,14 @@ import {
   Icon
 } from './styles';
 
-interface CategorySelectProps extends TouchableOpacityProps {
+interface CategorySelectButtonProps {
   title: string;
+  onPress: () => void;
 }
 
-export function CategorySelect({ title, ...rest}: CategorySelectProps) {
+export function CategorySelectButton({ title, onPress}: CategorySelectButtonProps) {
   return (
-    <Container>
+    <Container onPress={onPress}>
       <Category>
         {title}
       </Category>

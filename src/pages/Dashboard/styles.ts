@@ -9,6 +9,7 @@ import {
   FlatList, FlatListProps
 } from 'react-native';
 import { DataListProps } from "./";
+import { BorderlessButton } from "react-native-gesture-handler";
 
 
 export const Container = styled.View`
@@ -65,6 +66,8 @@ export const UserName = styled.Text`
   font-family: ${props => props.theme.fonts.bold};
 `;
 
+export const LogoutButton = styled(BorderlessButton)``;
+
 export const Icon = styled(Feather)`
   color: ${props => props.theme.colors.secondary};
   font-size: ${RFValue(24)}px;
@@ -101,4 +104,10 @@ export const TransactionList = styled(
     paddingBottom: 24
   }        
 })`
+`;
+
+export const LoadContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
