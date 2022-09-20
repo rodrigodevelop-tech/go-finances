@@ -14,7 +14,7 @@ import { themeDefault } from './src/global/styles/theme';
 
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { Routes } from './src/routes/routes';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -67,6 +67,7 @@ export default function App() {
           backgroundColor: theme.colors.background
         }}>
           <NavigationContainer>
+            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
             <Routes />
           </NavigationContainer>
         </GestureHandlerRootView>
