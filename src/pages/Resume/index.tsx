@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { VictoryPie } from 'victory-native';
@@ -43,15 +43,13 @@ interface CategoryDataProps {
 }
 
 export function Resume() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [totalByCategories, setTotalByCategories] = useState<CategoryDataProps[]>([]);
 
   const theme = useTheme();
 
   function handleDateChange(action: 'next' | 'prev') {
-    setIsLoading(true);
-    
     if (action === 'next') {
       setSelectedDate(addMonths(selectedDate, 1));
     } else {
@@ -60,6 +58,7 @@ export function Resume() {
   }
   
   async function loadData() {
+    setIsLoading(true);
     const collectionKey = '@gofinances:transactions';
     const response = await AsyncStorage.getItem(collectionKey);
     const responseFormatted = response ? JSON.parse(response) : [];
@@ -69,7 +68,7 @@ export function Resume() {
         expensive.type === 'negative'
         && new Date(expensive.date).getMonth() === selectedDate.getMonth()
         && new Date(expensive.date).getFullYear() === selectedDate.getFullYear()
-      );
+    );
     
     const expensivesTotal = expensives.reduce((acc: number, expensive: TransactionDataProps) => {
       return acc + Number(expensive.amount);
@@ -108,14 +107,10 @@ export function Resume() {
     setTotalByCategories(totalByCategory);
     setIsLoading(false);
   }
-
-  useEffect(() => {
-    loadData();
-  }, [selectedDate])
   
   useFocusEffect(useCallback(() => {
     loadData();
-  }, []));
+  }, [selectedDate]));
 
   return (
     <Container>
@@ -155,12 +150,12 @@ export function Resume() {
               colorScale={totalByCategories.map(category => category.color)}
               style={{
                 labels: {
-                  fontSize: RFValue(18),
+                  fontSize: RFValue(14),
                   fontWeight: 'bold',
                   fill: theme.colors.shape
                 }
               }}
-              labelRadius={80}
+              labelRadius={95}
               x="percent"
               y="total"
             />

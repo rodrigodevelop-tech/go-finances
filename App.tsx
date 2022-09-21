@@ -18,6 +18,8 @@ import { View, StatusBar } from 'react-native';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { Routes } from './src/routes/routes';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SignIn } from './src/pages/SignIn';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 
 
@@ -66,10 +68,13 @@ export default function App() {
           flex: 1,
           backgroundColor: theme.colors.background
         }}>
-          <NavigationContainer>
-            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-            <Routes />
-          </NavigationContainer>
+          <AuthProvider>
+            <NavigationContainer>
+              <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+              {/* <Routes /> */}
+              <SignIn />
+            </NavigationContainer>
+          </AuthProvider>
         </GestureHandlerRootView>
       </ThemeProvider>
     </View>

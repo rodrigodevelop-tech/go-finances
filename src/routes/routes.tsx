@@ -7,6 +7,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { Register } from '../pages/Register';
 import { useTheme } from 'styled-components';
 import { Resume } from '../pages/Resume';
+import { SignIn } from '../pages/SignIn';
 
 const { Navigator, Screen} = createBottomTabNavigator();
 
@@ -26,6 +27,18 @@ export function Routes() {
         }
       }}
     >
+      {/* <Screen
+        name=""
+        component={SignIn}
+        options={{
+          tabBarIcon: (({ size, color }) =>
+            <MaterialIcons
+              name="format-list-bulleted"
+              size={size}
+              color={color}
+            />)
+        }}
+      /> */}
       <Screen
         name="Listagem"
         component={Dashboard}
