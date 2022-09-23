@@ -2,30 +2,28 @@ import React, { useCallback, useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider, useTheme } from 'styled-components';
+import { themeDefault } from './src/global/styles/theme';
+
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+import { View, StatusBar } from 'react-native';
+import { Routes } from './src/routes/index.routes';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 import {
   Poppins_400Regular,
   Poppins_500Medium,
   Poppins_700Bold
 } from '@expo-google-fonts/poppins';
-
-import { themeDefault } from './src/global/styles/theme';
-
-import * as SplashScreen from 'expo-splash-screen';
-import * as Font from 'expo-font';
-import { View, StatusBar } from 'react-native';
-import { NavigationContainer, useTheme } from '@react-navigation/native';
-import { Routes } from './src/routes/routes';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SignIn } from './src/pages/SignIn';
-import { AuthProvider } from './src/contexts/AuthContext';
-
+import { useAuth } from './src/hooks/useAuth';
+import AppLoading from 'expo-app-loading';
 
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const theme = useTheme();
+  const { isUserStorageLoading  } = useAuth();
 
   useEffect(() => {
     async function prepare() {
@@ -56,6 +54,10 @@ export default function App() {
     return null;
   }
 
+  if (!isUserStorageLoading) {
+    <AppLoading />
+  }
+
   return (
     <View
       onLayout={onLayoutRootView}
@@ -66,14 +68,11 @@ export default function App() {
       <ThemeProvider theme={themeDefault}>
         <GestureHandlerRootView style={{
           flex: 1,
-          backgroundColor: theme.colors.background
+          backgroundColor: '#5636d3'
         }}>
           <AuthProvider>
-            <NavigationContainer>
-              <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-              {/* <Routes /> */}
-              <SignIn />
-            </NavigationContainer>
+            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+            <Routes />
           </AuthProvider>
         </GestureHandlerRootView>
       </ThemeProvider>

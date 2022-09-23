@@ -21,6 +21,7 @@ import {
   TransactionsTypes
 } from './styles';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useAuth } from '../../hooks/useAuth';
 
 
 interface FormData {
@@ -44,6 +45,8 @@ export function Register() {
 
   const [transactionType, setTransactionType] = useState('');
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
+  const { user } = useAuth();
 
   const { navigate } : NavigationProp<ParamListBase> = useNavigation();
   const { 
@@ -87,7 +90,7 @@ export function Register() {
     }
 
     try {
-      const collectionKey = '@gofinances:transactions';
+      const collectionKey = `@gofinances:transactions_user:${user.id}`;
       const data = await AsyncStorage.getItem(collectionKey);
       const currentData = data ? JSON.parse(data) : [];
 
@@ -107,7 +110,7 @@ export function Register() {
 
       navigate('Listagem');
     } catch (error) {
-      console.log(error);
+      console.log(`Error: ${error}`);
       Alert.alert('Não foi possível salvar');
     }
   }

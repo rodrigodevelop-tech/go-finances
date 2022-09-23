@@ -96,6 +96,16 @@ export const Title = styled.Text`
   font-family: ${props => props.theme.fonts.regular};
 `;
 
+export const NoTransaction = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const NoTransactionDescription = styled.Text`
+  color: ${props => props.theme.colors.text};
+`;
+
 export const TransactionList = styled(
   FlatList as new (props: FlatListProps<DataListProps>) => FlatList<DataListProps>
 ).attrs({

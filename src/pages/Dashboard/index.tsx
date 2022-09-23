@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 import { useTheme } from 'styled-components';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,8 +23,11 @@ import {
   Title,
   TransactionList,
   LogoutButton,
-  LoadContainer
+  LoadContainer,
+  NoTransaction,
+  NoTransactionDescription
 } from './styles';
+import { useAuth } from "../../hooks/useAuth";
 
 
 export interface DataListProps extends TransactionCardData {
@@ -49,15 +52,21 @@ export function Dashboard() {
 
   const theme = useTheme();
 
+  const { user, signOut } = useAuth();
+
   function getLastTransactionDate(collection: DataListProps[], type: 'positive' | 'negative') {
 
+    const collectionFiltered = collection.filter(transaction => transaction.type === type);
+
+    if (collectionFiltered.length === 0) {
+      return 0;
+    }
+
     const lastTransaction = new Date(Math.max.apply(Math,
-      collection
-        .filter(transaction => transaction.type === type)
-        .map((transaction) => new Date(transaction.date).getTime())
+      collectionFiltered
+      .map((transaction) => new Date(transaction.date).getTime())
     ));
 
-    console.log(lastTransaction)
 
     return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', {
       month: 'long'
@@ -67,7 +76,7 @@ export function Dashboard() {
 
   
   async function loadTransactions() {
-    const collectionKey = '@gofinances:transactions';
+    const collectionKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(collectionKey);
     const data = response ? JSON.parse(response) : [];
 
@@ -117,21 +126,21 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Última entrada dia ${lastTransactionEntries}`
+        lastTransaction: lastTransactionEntries === 0 ? 'Nenhuma entrada realizada' : `Última entrada dia ${lastTransactionEntries}`
       },
       expensive: {
         amount: expensiveTotal.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: `Última saída dia ${lastTransactionExpensive}`
+        lastTransaction: lastTransactionExpensive === 0 ? 'Nenhuma saída realizada' : `Última saída dia ${lastTransactionExpensive}`
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
-        lastTransaction: totalInterval
+        lastTransaction: !!totalInterval  ? 'Sem transações cadastradas' : totalInterval
       }
     });
 
@@ -160,16 +169,16 @@ export function Dashboard() {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: 'https://avatars.githubusercontent.com/u/60670489?v=4'
+                    uri: user.photo
                   }}
                 />
 
                 <User>
                   <UserGreeting>Olá, </UserGreeting>
-                  <UserName>Rodrigo</UserName>
+                    <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>
@@ -197,15 +206,25 @@ export function Dashboard() {
           </HighlightCards>
 
           <Transactions>
-            <Title>Listagem</Title>
-
-            <TransactionList
-              data={transactions}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) =>
-                <TransactionCard data={item} />
+              <Title>Listagem</Title>
+              
+              {
+                transactions.length > 0 ? (
+                  <TransactionList
+                    data={transactions}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) =>
+                      <TransactionCard data={item} />
+                    }
+                  />
+                ) : (  
+                  <NoTransaction>
+                    <NoTransactionDescription>Nenhuma transação cadastrada</NoTransactionDescription>
+                  </NoTransaction>
+                )
+              
               }
-            />
+
             
           </Transactions>
         </>

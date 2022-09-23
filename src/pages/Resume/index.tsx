@@ -16,13 +16,16 @@ import {
   MonthSelectButton,
   MonthSelectIcon,
   Month,
-  LoadContainer
+  LoadContainer,
+  NoTransaction,
+  NoTransactionDescription
 } from './styles';
 import { categories } from '../../utils/categories';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
 import { ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../../hooks/useAuth';
 
 
 interface TransactionDataProps {
@@ -49,6 +52,8 @@ export function Resume() {
 
   const theme = useTheme();
 
+  const { user } = useAuth();
+
   function handleDateChange(action: 'next' | 'prev') {
     if (action === 'next') {
       setSelectedDate(addMonths(selectedDate, 1));
@@ -59,7 +64,7 @@ export function Resume() {
   
   async function loadData() {
     setIsLoading(true);
-    const collectionKey = '@gofinances:transactions';
+    const collectionKey = `@gofinances:transactions_user:${user.id}`;
     const response = await AsyncStorage.getItem(collectionKey);
     const responseFormatted = response ? JSON.parse(response) : [];
 
@@ -144,32 +149,42 @@ export function Resume() {
             </MonthSelectButton>
           </MonthSelect>
 
-          <ChartContainer>
-            <VictoryPie
-              data={totalByCategories}
-              colorScale={totalByCategories.map(category => category.color)}
-              style={{
-                labels: {
-                  fontSize: RFValue(14),
-                  fontWeight: 'bold',
-                  fill: theme.colors.shape
-                }
-              }}
-              labelRadius={95}
-              x="percent"
-              y="total"
-            />
-          </ChartContainer>
           {
-            totalByCategories.map(item => (
-              <HistoryCard
-                key={item.key}
-                color={item.color}
-                title={item.name}
-                amount={item.totalFormatted}
-              />
-            ))
-          }
+            totalByCategories.length > 0 ? (
+              <ChartContainer>
+                <VictoryPie
+                  data={totalByCategories}
+                  colorScale={totalByCategories.map(category => category.color)}
+                  style={{
+                    labels: {
+                      fontSize: RFValue(14),
+                      fontWeight: 'bold',
+                      fill: theme.colors.shape
+                    }
+                  }}
+                  labelRadius={95}
+                  x="percent"
+                  y="total"
+                />   
+              </ChartContainer>
+            ) : (
+              <NoTransaction>
+                <NoTransactionDescription>
+                  Nenhuma transação de saída realizada neste mês
+                </NoTransactionDescription>
+              </NoTransaction>
+            )
+            }
+            {
+                  totalByCategories.map(item => (
+                    <HistoryCard
+                      key={item.key}
+                      color={item.color}
+                      title={item.name}
+                      amount={item.totalFormatted}
+                    />
+                  ))
+                }
         </Content>
     }
     </Container>

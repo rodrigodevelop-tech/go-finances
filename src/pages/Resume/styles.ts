@@ -43,6 +43,15 @@ export const MonthSelect = styled.View`
 
 `;
 
+export const NoTransaction = styled.View`
+  margin-top: 154px;
+  align-items: center;
+`;
+
+export const NoTransactionDescription = styled.Text`
+  color: ${props => props.theme.colors.text};
+`;
+
 export const MonthSelectButton = styled(BorderlessButton)``;
 
 export const MonthSelectIcon = styled(Feather)`
